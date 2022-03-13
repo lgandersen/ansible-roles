@@ -2,9 +2,9 @@
 - name: "Install pip, setuptools, virtualenv for mobile_modem_exporter"
   pkgng:
     name:
-      - "py37-pip"
-      - "py37-setuptools"
-      - "py37-virtualenv"
+      - "py38-pip"
+      - "py38-setuptools"
+      - "py38-virtualenv"
     state: "present"
 
 - name: "Install mobile_modem_exporter in virtualenv"

@@ -1,7 +1,7 @@
 ---
 - name: "Install fail2ban"
   pkgng:
-    name: "py37-fail2ban"
+    name: "py38-fail2ban"
     state: "present"
 
 - name: "Copy config file"

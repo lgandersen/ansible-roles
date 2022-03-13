@@ -1,12 +1,12 @@
 ---
 - name: "Install pip"
   pkgng:
-    name: "py37-pip"
+    name: "py38-pip"
     state: "present"
 
 - name: "Install setuptools"
   pkgng:
-    name: "py37-setuptools"
+    name: "py38-setuptools"
     state: "present"
 
 - name: "Copy sqlite3.h to /usr/local/include/python2.7 because I have no idea how this works"
