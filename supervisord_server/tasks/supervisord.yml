@@ -1,15 +1,8 @@
 ---
 - name: "Install supervisord"
   pkgng:
-    name: "py37-supervisor"
+    name: "py38-supervisor"
     state: "present"
-
-- name: "Enable supervisord"
-  service:
-    name: "supervisord"
-    enabled: True
-  notify:
-    - "start supervisord"
 
 - name: "Copy supervisor config"
   template:
@@ -36,3 +29,13 @@
     supervisord_filename: "custom"
     supervisord_programs: "{{ supervisord_custom_jobs }}"
   when: supervisord_custom_jobs is defined
+
+- name: "Enable supervisord"
+  service:
+    name: "supervisord"
+    enabled: True
+
+- name: "starting the supervisord service"
+  service:
+    name: "supervisord"
+    state: "started"
