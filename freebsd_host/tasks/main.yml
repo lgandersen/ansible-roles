@@ -41,4 +41,3 @@
     - "mobilemodem"
 - include_tasks: "ppp.yml"
   when: ppp_profiles is defined
-- include_tasks: "carpcontrol.yml"

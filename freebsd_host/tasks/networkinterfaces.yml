@@ -20,42 +20,6 @@
   changed_when: False
   when: item.configure
 
-- name: "Create carp MASTER state change scripts"
-  include_tasks:
-    file: "freebsd_host/tasks/carpcontrol.d.yml"
-  vars:
-    vhid: "{{ item.ips.carp.vhid }}@{{ item.interface }}{% if item.vlan is defined %}.{{ item.vlan }}{% endif %}"
-    state: "MASTER"
-    filename: "customcommands.sh"
-    content: |
-      #!/bin/sh
-      logger -t carp "${0}: {{ vhid }} became {{ state }}, running {{ item.ips.carp.commands.master|length }} commands..."
-      {% for command in item.ips.carp.commands.master %}
-      logger -t carp "Running command: {{ command }}"
-      {{ command }}
-      {% endfor %}
-      logger -t carp "Done running {{ item.ips.carp.commands.master|length }} commands"
-  with_items: "{{ network_interfaces }}"
-  when: item.ips.carp.commands.master is defined
-
-- name: "Create carp BACKUP state change scripts"
-  include_tasks:
-    file: "freebsd_host/tasks/carpcontrol.d.yml"
-  vars:
-    vhid: "{{ item.ips.carp.vhid }}@{{ item.interface }}{% if item.vlan is defined %}.{{ item.vlan }}{% endif %}"
-    state: "BACKUP"
-    filename: "customcommands.sh"
-    content: |
-      #!/bin/sh
-      logger -t carp "${0}: {{ vhid }} became {{ state }}, running {{ item.ips.carp.commands.backup|length }} commands..."
-      {% for command in item.ips.carp.commands.backup %}
-      logger -t carp "Running command: {{ command }}"
-      {{ command }}
-      {% endfor %}
-      logger -t carp "Done running {{ item.ips.carp.commands.backup|length }} commands"
-  with_items: "{{ network_interfaces }}"
-  when: item.ips.carp.commands.backup is defined
-
 - name: "(Re-)Configure network interfaces (service netif restart $interface)"
   command: "/usr/sbin/service netif restart {{ item.0.interface }}{% if item.0.vlan is defined %}.{{ item.0.vlan }}{% endif %}"
   with_together:
