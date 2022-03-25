@@ -10,23 +10,6 @@
   ignore_errors: True
   when: disableresult is changed
 
-- name: "Disable postfix"
-  sysrc:
-    name: "postfix_enable"
-    value: "no"
-  register: postfixresult
-
-- name: "onestop postfix when needed"
-  command: "/usr/sbin/service postfix onestop"
-  ignore_errors: True
-  when: postfixresult is changed
-
-- name: "Uninstall postfix"
-  pkgng:
-    name: "postfix"
-    state: "absent"
-  when: postfixresult is changed
-
 - name: "Install nullmailer"
   pkgng:
     name: "nullmailer"
