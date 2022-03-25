@@ -6,6 +6,7 @@
 - include_tasks: "zfs-periodic.yml"
 - include_tasks: "zfs-scrub.yml"
 - include_tasks: "aesni.yml"
+  when: host_type == "hardware"
 - include_tasks: "sysctl.yml"
 - include_tasks: "arc_max.yml"
 - include_tasks: "vmware.yml"
