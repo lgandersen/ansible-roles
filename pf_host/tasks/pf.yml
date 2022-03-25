@@ -12,7 +12,6 @@
     dest: "{{ pf_conf_path }}"
     validate: 'pfctl -n -f %s'
   when: pf_jail_vm_host
-  notify: "reload pf"
   tags:
     - "pf"
 
@@ -22,25 +21,41 @@
     dest: "{{ pf_conf_path }}"
     validate: 'pfctl -n -f %s'
   when: not pf_jail_vm_host
-  notify: "reload pf"
   tags:
     - "pf"
 
-- name: "Enable pf"
+- name: "Enable pf in rc.conf"
   service:
     name: "pf"
     enabled: yes
-  notify:
-    - "kldload pf module"
   tags:
     - "pf"
 
-- name: "Enable pflog"
+- name: "Enable pflog in rc.conf"
   service:
     name: "pflog"
     enabled: yes
-  notify:
-    - "kldload pflog module"
   tags:
     - "pf"
 
+- name: "check if pf module is loaded"
+  shell: "/sbin/kldstat | grep pf.ko"
+  register: pf_module_check
+  ignore_errors: true
+
+- name: "kldload pf module"
+  command: "/sbin/kldload pf"
+  when: pf_module_check.rc != 0
+
+- name: "check if pflog module is loaded"
+  shell: "/sbin/kldstat | grep pflog.ko"
+  register: pflog_module_check
+  ignore_errors: true
+
+- name: "kldload pflog module"
+  command: "/sbin/kldload pflog"
+  when: pflog_module_check.rc != 0
+
+- name: reload pf
+  shell: /sbin/pfctl -f /etc/pf.conf
+  become: yes

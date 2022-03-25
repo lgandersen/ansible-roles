@@ -296,22 +296,6 @@
 - name: "reload openbgpd"
   command: "/usr/local/sbin/bgpctl reload"
 
-### pf_host
-- name: "kldload pf module"
-  command: "/sbin/kldload pf"
-
-- name: "kldload pflog module"
-  command: "/sbin/kldload pflog"
-
-- name: "reload pf"
-  service:
-    name: "pf"
-    state: "reloaded"
-
-- name: "kldload carp module"
-  command: "/sbin/kldload carp"
-
-
 ### postgresql_server
 - name: "restart pgbouncer"
   command: "/usr/local/bin/supervisorctl restart pgbouncer"
