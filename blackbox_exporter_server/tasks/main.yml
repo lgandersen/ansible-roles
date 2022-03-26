@@ -1,3 +1,0 @@
----
-- include_tasks: "blackbox_exporter.yml"
-- include_tasks: "ssl_exporter.yml"

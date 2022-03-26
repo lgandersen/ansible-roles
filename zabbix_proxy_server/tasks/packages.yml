@@ -1,6 +1,0 @@
----
-- name: "Install zabbix proxy"
-  pkgng:
-    name: "zabbix40-proxy"
-    state: "present"
-

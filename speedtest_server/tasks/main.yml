@@ -1,5 +1,0 @@
----
-- include_tasks: "user.yml"
-- include_tasks: "speedtest.yml"
-- include_tasks: "supervisord.yml"
-

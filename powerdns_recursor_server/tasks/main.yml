@@ -1,5 +1,0 @@
----
-- include_tasks: "powerdns_recursor.yml"
-- include_tasks: "supervisord.yml"
-- include_tasks: "syslog.yml"
-

@@ -1,8 +1,0 @@
----
-- name: "copy zabbix_proxy.conf"
-  template:
-    src: "zabbix_proxy.conf.j2"
-    dest: "/usr/local/etc/zabbix4/zabbix_proxy.conf"
-    mode: "0600"
-  notify: "restart zabbix proxy"
-

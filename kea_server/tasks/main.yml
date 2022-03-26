@@ -1,5 +1,0 @@
----
-- include_tasks: kea.yml
-- include_tasks: syslog.yml
-- include_tasks: newsyslog.yml
-

@@ -1,3 +1,0 @@
-{% for key in dkimkeys %}
-{{ key.selector }}._domainkey.{{ key.domain }}     {{ key.domain }}:{{ key.selector }}:/usr/local/etc/opendkim/{{ key.domain }}-{{ key.selector }}.private
-{% endfor %}

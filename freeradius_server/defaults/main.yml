@@ -1,3 +1,0 @@
----
-freeradius_postgres_host: "{{ postgres_host }}"
-

@@ -1,6 +1,0 @@
----
-- name: "Install atheme"
-  pkgng:
-    name: "atheme-services"
-    state: "present"
-

@@ -1,6 +1,0 @@
----
-- name: "install roundcube"
-  pkgng:
-    name: "roundcube-php80"
-    state: "present"
-

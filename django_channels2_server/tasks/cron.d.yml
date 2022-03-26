@@ -1,8 +1,0 @@
----
-- name: "Create cron.d files for Django"
-  include_role:
-    name: "freebsd_base"
-    tasks_from: "cron.d"
-  vars:
-    cron_d_jobs: "{{ django_cron_d_jobs }}"
-

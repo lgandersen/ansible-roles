@@ -1,4 +1,0 @@
----
-dependencies:
-  - { role: handlers }
-  - { role: nginx_server, nginx_proxy: yes }

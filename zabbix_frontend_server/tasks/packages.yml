@@ -1,6 +1,0 @@
----
-- name: "install zabbix frontend"
-  pkgng:
-    name: "zabbix4-frontend"
-    state: "present"
-
