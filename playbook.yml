@@ -66,12 +66,6 @@
   roles:
     - "freebsd_host"
 
-- name: "configure ezjail hosts"
-  hosts: "ezjail_hosts"
-  become: True
-  roles:
-    - "ezjail_host"
-
 - name: "configure chyves bhyve hosts"
   hosts: "chyves_hosts"
   become: True
@@ -93,29 +87,11 @@
   roles:
     - "etherpad_server"
 
-- name: "configure all murmur servers"
-  hosts: "murmur_servers"
-  become: True
-  roles:
-    - "murmur_server"
-
 - name: "configure all nginx http and https servers"
   hosts: "nginx_servers"
   become: True
   roles:
     - "nginx_server"
-
-- name: "configure dovecot servers"
-  hosts: "dovecot_servers"
-  become: True
-  roles:
-    - "dovecot_server"
-
-- name: "configure erlang webservers"
-  hosts: "erlang_web_servers"
-  become: True
-  roles:
-    - "erlang_web_server"
 
 - name: "configure wiki servers"
   hosts: "mediawiki_servers"
@@ -123,35 +99,11 @@
   roles:
     - "mediawiki_server"
 
-- name: "configure people servers"
-  hosts: "people_servers"
-  become: True
-  roles:
-    - "people_server"
-
-- name: "configure postfix servers"
-  hosts: "postfix_servers"
-  become: True
-  roles:
-    - "postfix_server"
-
 - name: "configure tor servers"
   hosts: "tor_servers"
   become: True
   roles:
     - "tor_server"
-
-- name: "configure kea dhcp servers"
-  hosts: "kea_servers"
-  become: True
-  roles:
-    - "kea_server"
-
-- name: "configure znc servers"
-  hosts: "znc_servers"
-  become: True
-  roles:
-    - "znc_server"
 
 - name: "configure isc dhcp servers"
   hosts: "isc_dhcpd_servers"
@@ -183,41 +135,11 @@
   roles:
     - "syslogng_server"
 
-- name: "configure zabbix servers"
-  hosts: "zabbix_servers"
-  become: True
-  roles:
-    - "zabbix_server"
-
-- name: "configure zabbix frontend servers"
-  hosts: "zabbix_frontend_servers"
-  become: True
-  roles:
-    - "zabbix_frontend_server"
-
-- name: "configure zabbix proxy servers"
-  hosts: "zabbix_proxy_servers"
-  become: True
-  roles:
-    - "zabbix_proxy_server"
-
 - name: "configure tykdnscheck servers"
   hosts: "tykdnscheck_servers"
   become: True
   roles:
     - "tykdnscheck_server"
-
-- name: "configure roundcube servers"
-  hosts: "roundcube_servers"
-  become: True
-  roles:
-    - "roundcube_server"
-
-- name: "configure nfsen servers"
-  hosts: "nfsen_servers"
-  become: True
-  roles:
-    - "nfsen_server"
 
 - name: "configure tykbackup servers"
   hosts: "tykbackup_servers"
@@ -225,41 +147,11 @@
   roles:
     - "tykbackup_server"
 
-- name: "configure download servers"
-  hosts: "download_servers"
-  become: True
-  roles:
-    - "download_server"
-
-- name: "configure rt servers"
-  hosts: "rt_servers"
-  become: True
-  roles:
-    - "rt_server"
-
 - name: "configure radicale servers"
   hosts: "radicale_servers"
   become: True
   roles:
     - "radicale_server"
-
-- name: "configure elk servers"
-  hosts: "elk_servers"
-  become: True
-  roles:
-    - "elk_server"
-
-- name: "configure iperf servers"
-  hosts: "iperf_servers"
-  become: True
-  roles:
-    - "iperf_server"
-
-- name: "configure bind servers"
-  hosts: "bind_servers"
-  become: True
-  roles:
-    - "bind_server"
 
 - name: "configure prometheus servers"
   hosts: "prometheus_servers"
@@ -279,65 +171,17 @@
   roles:
     - "ansible_server"
 
-- name: "configure django channels2 servers"
-  hosts: "django_channels2_servers"
-  become: True
-  roles:
-    - "django_channels2_server"
-
-- name: "configure nipapd servers"
-  hosts: "nipapd_servers"
-  become: True
-  roles:
-    - "nipapd_server"
-
-- name: "configure nipapcli servers"
-  hosts: "nipapcli_servers"
-  become: True
-  roles:
-    - "nipapcli_server"
-
-- name: "configure nipapwww servers"
-  hosts: "nipapwww_servers"
-  become: True
-  roles:
-    - "nipapwww_server"
-
-- name: "configure speedtest servers"
-  hosts: "speedtest_servers"
-  become: True
-  roles:
-    - "speedtest_server"
-
 - name: "configure mastodon servers"
   hosts: "mastodon_servers"
   become: True
   roles:
     - "mastodon_server"
 
-- name: "configure freeradius3 servers"
-  hosts: "freeradius_servers"
-  become: True
-  roles:
-    - "freeradius_server"
-
 - name: "configure alertmanager servers"
   hosts: "alertmanager_servers"
   become: True
   roles:
     - "alertmanager_server"
-
-- name: "configure searx servers"
-  hosts: "searx_servers"
-  become: True
-  roles:
-    - "searx_server"
-
-- name: "configure blackbox exporter servers"
-  hosts: "blackbox_exporter_servers"
-  become: True
-  roles:
-    - "blackbox_exporter_server"
 
 - name: "configure nfs servers"
   hosts: "nfs_servers"
@@ -351,92 +195,8 @@
   roles:
     - "snmp_exporter_server"
 
-- name: "configure poudriere servers"
-  hosts: "poudriere_servers"
-  become: True
-  roles:
-    - "poudriere_server"
-
-- name: "configure prosody servers"
-  hosts: "prosody_servers"
-  become: True
-  roles:
-    - "prosody_server"
-
-- name: "configure ctld servers"
-  hosts: "ctld_servers"
-  become: True
-  roles:
-    - "ctld_server"
-
-- name: "configure gitea servers"
-  hosts: "gitea_servers"
-  become: True
-  roles:
-    - "gitea_server"
-
-- name: "configure powerdns_recursor servers"
-  hosts: "powerdns_recursor_servers"
-  become: True
-  roles:
-    - "powerdns_recursor_server"
-
-- name: "configure dnsdist servers"
-  hosts: "dnsdist_servers"
-  become: True
-  roles:
-    - "dnsdist_server"
-
-- name: "configure atheme servers"
-  hosts: "atheme_servers"
-  become: True
-  roles:
-    - "atheme_server"
-
-- name: "configure openbgpd servers"
-  hosts: "openbgpd_servers"
-  become: True
-  roles:
-    - "openbgpd_server"
-
-- name: "configure oxidized servers"
-  hosts: "oxidized_servers"
-  become: True
-  roles:
-    - "oxidized_server"
-
-- name: "configure stund servers"
-  hosts: "stund_servers"
-  become: True
-  roles:
-    - "stund_server"
-
-- name: "configure certgrinderd servers"
-  hosts: "certgrinderd_servers"
-  become: True
-  roles:
-    - "certgrinderd_server"
-
 - name: "configure jitsi-meet servers"
   hosts: "jitsi_meet_servers"
   become: True
   roles:
     - "jitsi_meet_server"
-
-- name: "configure NUT servers"
-  hosts: "nut_servers"
-  become: True
-  roles:
-    - "nut_server"
-
-- name: "configure motion servers"
-  hosts: "motion_servers"
-  become: True
-  roles:
-    - "motion_server"
-
-- name: "configure bird2 servers"
-  hosts: "bird2_servers"
-  become: True
-  roles:
-    - "bird2_server"
