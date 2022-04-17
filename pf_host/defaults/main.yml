@@ -12,8 +12,6 @@ network_interfaces:
     configure: False
     pf_macro: "if"
     pf_scrub: True
-    pf_sync: False
-    pf_carp: False
 
 pf_options:
   limit states: "500000"
