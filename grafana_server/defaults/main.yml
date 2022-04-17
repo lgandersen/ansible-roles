@@ -10,6 +10,8 @@ nginx_locationslash: |
 # http://docs.grafana.org/installation/configuration/#url
 #grafana_database_url: 
 
+grafana_database_type: "sqlite3"
+
 # LDAP can be enabled by defining grafana_ldap_config: http://docs.grafana.org/auth/ldap/
 grafana_ldap_config_path: /usr/local/etc/grafana-ldap.toml
 

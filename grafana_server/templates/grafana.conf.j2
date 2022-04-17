@@ -9,7 +9,8 @@ static_root_path = public
 root_url = {{ grafana_root_url }}
 
 [database]
-url = {{ grafana_database_url }}
+type = {{ grafana_database_type }}
+{% if grafana_database_type != "sqlite3" %}url = {{ grafana_database_url }}{% endif %}
 
 {% if grafana_ldap_config is defined  %}
 [auth.ldap]
