@@ -1,4 +1,3 @@
 ---
 dependencies:
   - { role: handlers }
-  - { role: fail2ban_server, when: (nginx_proxy and certgrinder_hostname_sets is defined) and nginx_fail2ban }
