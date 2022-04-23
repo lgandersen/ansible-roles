@@ -6,38 +6,6 @@
   tags:
     - "pf"
 
-- name: "Setup pf.conf for jail/vm hosts"
-  template:
-    src: "pf-jail.conf.j2"
-    dest: "{{ pf_conf_path }}"
-    validate: 'pfctl -n -f %s'
-  when: pf_jail_vm_host
-  tags:
-    - "pf"
-
-- name: "Setup pf.conf for regular hosts and gateways"
-  template:
-    src: "pf.conf.j2"
-    dest: "{{ pf_conf_path }}"
-    validate: 'pfctl -n -f %s'
-  when: not pf_jail_vm_host
-  tags:
-    - "pf"
-
-- name: "Enable pf in rc.conf"
-  service:
-    name: "pf"
-    enabled: yes
-  tags:
-    - "pf"
-
-- name: "Enable pflog in rc.conf"
-  service:
-    name: "pflog"
-    enabled: yes
-  tags:
-    - "pf"
-
 - name: "check if pf module is loaded"
   shell: "/sbin/kldstat | grep pf.ko"
   register: pf_module_check
@@ -56,6 +24,50 @@
   command: "/sbin/kldload pflog"
   when: pflog_module_check.rc != 0
 
-- name: reload pf
-  shell: /sbin/pfctl -f /etc/pf.conf
+- name: "Touch /etc/pf.conf"
+  command: /usr/bin/touch /etc/pf.conf
+  args:
+    creates: /etc/pf.conf
+
+- name: "Enable pf in rc.conf"
+  service:
+    name: "pf"
+    enabled: yes
+    state: started
+  tags:
+    - "pf"
+  notify: "Reload pf rules"
+
+- name: "load empty pf rules"
+  command: /sbin/pfctl -f /etc/pf.conf
+  become: yes
+
+- name: "Setup pf.conf for jail/vm hosts"
+  template:
+    src: "pf-jail.conf.j2"
+    dest: "{{ pf_conf_path }}"
+    validate: 'pfctl -n -f %s'
+  when: pf_jail_vm_host
+  tags:
+    - "pf"
+
+- name: "Setup pf.conf for regular hosts and gateways"
+  template:
+    src: "pf.conf.j2"
+    dest: "{{ pf_conf_path }}"
+    validate: 'pfctl -n -f %s'
+  when: not pf_jail_vm_host
+  tags:
+    - "pf"
+
+- name: "Enable pflog in rc.conf"
+  service:
+    name: "pflog"
+    enabled: yes
+    state: started
+  tags:
+    - "pf"
+
+- name: "load pf rules"
+  command: /sbin/pfctl -f /etc/pf.conf
   become: yes
