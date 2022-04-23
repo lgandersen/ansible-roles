@@ -1,0 +1,53 @@
+#jinja2: lstrip_blocks: "True"
+{% for jail in jails %}
+
+{{ jail.hostname|replace('.','_') }} {
+  host.hostname = "{{jail.hostname}}";
+  path = "{% if jail.root is defined %}jail.root{% else %}{{ ezjail_root }}/{{ jail.hostname }}{% endif %}";
+  vnet;
+  vnet.interface = "{% for interface in jail.interfaces %}epair{{ interface.epair }}b{% endfor %}";
+  mount.devfs;
+  mount.fdescfs;
+  mount.procfs;
+  mount.fstab = "/etc/fstab.{{ jail.hostname|replace('.','_') }}";
+  allow.raw_sockets;
+  devfs_ruleset="{{ jail.devfs_ruleset }}";
+  #allow.set_hostname = 1;
+
+  ### Startup sequence
+  exec.consolelog = "/var/log/jail_{{ jail.hostname|replace('.','_') }}_console.log";
+  {% for interface in jail.interfaces %}
+  exec.prestart+="ifconfig epair{{ interface.epair }} create";
+  {# #exec.prestart+="ifconfig epair0b link add 02:d9:fb:db:3c:0b"; #}
+  exec.prestart+="ifconfig {{interface.bridge}} addm epair{{interface.epair}}a up";
+  {# #exec.prestart+="ifconfig epair0a up"; #}
+  {# #exec.prestart+="ifconfig bridge0 up"; #}
+  {% endfor %}
+
+  {% if jail.parameters is defined %}
+  {% for param in jail.parameters %}
+  {{param}};
+  {% endfor %}
+  {% endif %}
+
+  {% for interface in jail.interfaces %}
+  exec.start += "ifconfig epair{{ interface.epair }}b name jail{{ loop.index0 }}";
+  exec.start += "ifconfig jail{{ loop.index0 }} {{ interface.ifconfig_inet }}";
+  {% endfor %}
+
+  {% for route in jail.routes %}
+  exec.start += "route add {{ route }}";
+  {% endfor %}
+
+  exec.start += "/bin/sh /etc/rc";
+
+  ### Shutdown sequence
+  exec.stop = "/bin/sh /etc/rc.shutdown";
+
+  {% for interface in jail.interfaces %}
+  exec.poststop+="ifconfig {{interface.bridge}} deletem epair{{interface.epair}}a";
+  exec.poststop+="ifconfig epair{{interface.epair}}a destroy";
+  {% endfor %}
+}
+
+{% endfor %}
