@@ -13,6 +13,7 @@
         - "jail_host"
   tags:
     - "jail_host"
+
 - include_tasks:
     file: "flavour.yml"
     apply:
@@ -20,6 +21,7 @@
         - "jail_host"
   tags:
     - "jail_host"
+
 - include_tasks:
     file: "jailmergemaster.yml"
     apply:
@@ -27,6 +29,7 @@
         - "jail_host"
   tags:
     - "jail_host"
+
 - include_tasks:
     file: "rctl.yml"
     apply:
@@ -34,6 +37,7 @@
         - "jail_host"
   tags:
     - "jail_host"
+
 - include_tasks:
     file: "jail_exporter.yml"
     apply:
@@ -41,6 +45,7 @@
         - "jail_host"
   tags:
     - "jail_host"
+
 - include_tasks:
     file: "jails.yml"
     apply:
@@ -49,4 +54,17 @@
         - "jails"
   tags:
     - "jail_host"
+    - "jails"
+
+- name: "Create jail.conf"
+  template:
+    src: "jail.conf.j2"
+    dest: "/etc/jail.conf"
+  tags:
+    - "jails"
+    - "jail_host"
+
+- name: "Start the jails"
+  command: "service jail start"
+  tags:
     - "jails"

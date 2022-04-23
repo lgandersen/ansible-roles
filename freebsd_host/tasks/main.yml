@@ -41,3 +41,11 @@
     - "mobilemodem"
 - include_tasks: "ppp.yml"
   when: ppp_profiles is defined
+
+- name: "Make sure this host gets ip.forwarding enabled when booting"
+  command: sysrc gateway_enable="YES"
+  when: pf_gateway
+
+- name: "Make sure the gateway is enabled"
+  command: "sysctl net.inet.ip.forwarding=1"
+  when: pf_gateway

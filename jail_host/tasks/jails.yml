@@ -30,14 +30,3 @@
   command: "/sbin/zfs create -o mountpoint=none -o jailed=on {{ item.0.1 }}"
   loop: "{{ jails | subelements('zfs_datasets', skip_missing=True)|zip(ezjail_jailstorage_results)|list }}"
   when: item.1 == "failed"
-
-- name: "Template /etc/rc.conf.d/jail/ config files for jails, (re)start if needed."
-  template:
-    src: "jail.d.j2"
-    dest: "/etc/rc.conf.d/jail/{{ jailname }}"
-  vars:
-    jail: "{{ item }}"
-    jailname: "{{ item.hostname|replace('.','_') }}"
-  loop: "{{ jails }}"
-  notify: "restart changed jails"
-  register: jail_results
