@@ -71,24 +71,6 @@
   tags:
     - "vhosts"
 
-- name: "Reload nginx now, so http vhosts are available for Certgrinder"
-  service:
-    name: nginx
-    state: reloaded
-  when:
-    - nginx_proxy
-    - certgrinder_hostname_sets is defined
-  tags:
-    - "vhosts"
-
-- name: "Run certgrinder"
-  command: "/usr/bin/su -m {{ certgrinder_user }} -c '/usr/local/bin/certgrinder --config-file {{ certgrinder_home }}/certgrinder.conf --now periodic'"
-  when:
-    - nginx_proxy
-    - certgrinder_hostname_sets is defined
-  tags:
-    - "vhosts"
-
 - name: "Copy vhost https configs for https enabled vhosts"
   template:
     src: "https-vhost.conf.j2"

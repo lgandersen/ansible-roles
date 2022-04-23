@@ -13,13 +13,6 @@ server {
     # hostnames handled in this vhost, IDN names are included both as idna and ascii, where applicable
     server_name             {% for hostname in item.value.hostnames %}{{ hostname.encode('idna').decode('ascii') }} {% if hostname != hostname.encode('idna').decode('ascii') %}{{ hostname }} {% endif %}{% endfor %};
 
-{% if item.value.letsencrypt | default(True) %}
-    # letsencrypt ACME redirect to Certgrinder server
-    location '/.well-known/acme-challenge' {
-          return 301 {{ certgrinder_redirect_url }}$request_uri;
-    }
-{% endif %}
-
 {% if item.value.https_redirect | default(True) %}
     # https redirect
     location / {
