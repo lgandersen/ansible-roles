@@ -80,6 +80,17 @@
 
 ##############################################################################
 ### application roles below here
+- name: "configure irc servers"
+  hosts: "irc_servers"
+  become: True
+  roles:
+    - "irc_server"
+
+- name: "configure boardet servers"
+  hosts: "boardet"
+  become: True
+  roles:
+    - "boardet"
 
 - name: "configure etherpad servers"
   hosts: "etherpad_servers"
