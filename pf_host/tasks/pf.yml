@@ -3,8 +3,6 @@
   include_vars:
     file: "../include_vars/pf_vars.yml"
   ignore_errors: yes
-  tags:
-    - "pf"
 
 - name: "check if pf module is loaded"
   shell: "/sbin/kldstat | grep pf.ko"
@@ -34,13 +32,6 @@
     name: "pf"
     enabled: yes
     state: started
-  tags:
-    - "pf"
-  notify: "Reload pf rules"
-
-- name: "load empty pf rules"
-  command: /sbin/pfctl -f /etc/pf.conf
-  become: yes
 
 - name: "Setup pf.conf for jail/vm hosts"
   template:
@@ -48,8 +39,6 @@
     dest: "{{ pf_conf_path }}"
     validate: 'pfctl -n -f %s'
   when: pf_jail_vm_host
-  tags:
-    - "pf"
 
 - name: "Setup pf.conf for regular hosts and gateways"
   template:
@@ -57,17 +46,10 @@
     dest: "{{ pf_conf_path }}"
     validate: 'pfctl -n -f %s'
   when: not pf_jail_vm_host
-  tags:
-    - "pf"
+  notify: "Reload pf rules"
 
 - name: "Enable pflog in rc.conf"
   service:
     name: "pflog"
     enabled: yes
     state: started
-  tags:
-    - "pf"
-
-- name: "load pf rules"
-  command: /sbin/pfctl -f /etc/pf.conf
-  become: yes
