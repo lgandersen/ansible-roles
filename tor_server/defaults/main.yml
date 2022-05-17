@@ -1,4 +1,29 @@
 ---
-tor_instances:
-  main:
-    datadir: "/var/db/tor"
+# Where tor should store all of its stuff
+tor_datadir: "/var/db/tor"
+
+# What IP tor advertises. If empty string TOR will guess.
+tor_public_address: ""
+
+# Where to listen for incoming socks-connections. Can be port-number or <ip>:<port>, e.g., 10.0.2.5:9050
+tor_socks_port: 0
+
+# Restrict which ip's can connect through tor. If empty string everything is allowed. See torr.sample for syntax examples.
+# e.g., accept 10.0.2.0/24
+tor_socks_policy: ""
+
+# What port is used for the onion router
+tor_or_port: 9001
+
+# what port to advertise for directory connections
+tor_dir_port: 9030
+
+# Nickname of the relay
+tor_nickname: ""
+
+# Throttle traffic average/rate in KiloBytes per second. If tor_relay_bandwidth_burst is empty string there is no limit.
+tor_relay_bandwidth_rate: "4000 KBytes"
+tor_relay_bandwidth_burst: "6000 KBytes"
+
+# Exit policies as defined in torrc file. Default is to allow everything, i.e., not a exit node.
+tor_exit_policy: "reject *:*"
