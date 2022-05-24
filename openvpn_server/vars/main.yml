@@ -1,0 +1,23 @@
+---
+# OpenVPN configuration options
+openvpn_server_port: 1194
+openvpn_server_subnet: "10.12.34.0 255.255.255.0"
+openvpn_server_push_items:
+  - "route 10.12.34.0 255.255.255.0"
+  - "redirect-gateway def1"
+
+# NOTE: This can change if more than one tun-device is created in otherjails or the host.
+openvpn_server_if_name: "tun0"
+
+# Hostname where the clients can connect to the server
+openvpn_server_hostname: "changeme.com"
+
+# EasyRSA configuration options
+openvpn_server_ca_expire: 3650
+openvpn_server_cert_expire: 3650
+openvpn_server_rsa_key_size: 4096
+
+# Name (and CN?) of the certificates in the easy-rsa pki/issued folder
+openvpn_client_certificates:
+  - "client1"
+  - "client2"

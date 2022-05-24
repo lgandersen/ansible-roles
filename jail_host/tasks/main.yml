@@ -6,6 +6,13 @@
   tags:
     - "jail_host"
 
+- name: "Copy custom devfs.rules with ruleset 6 for jails needing tun/bpf devices."
+  copy:
+    src: "devfs.rules"
+    dest: "/etc/devfs.rules"
+    owner: root
+  tags: "jail_host"
+
 - include_tasks:
     file: "ezjail.yml"
     apply:

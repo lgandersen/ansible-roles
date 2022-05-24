@@ -1,0 +1,27 @@
+port 1194
+proto udp
+dev {{ openvpn_server_if_name }}
+
+#local 10.0.2.15 <--- listening address
+
+server {{ openvpn_server_subnet }}
+
+{% for push_item in openvpn_server_push_items %}
+push "{{ push_item }}"
+{% endfor %}
+
+ca /usr/local/share/easy-rsa/pki/ca.crt
+cert /usr/local/share/easy-rsa/pki/issued/{{ inventory_hostname }}.crt
+key /usr/local/share/easy-rsa/pki/private/{{ inventory_hostname }}.key
+dh /usr/local/share/easy-rsa/pki/dh.pem
+ifconfig-pool-persist /var/tmp/openvpn-pool.txt
+
+user nobody
+group nobody
+persist-key
+persist-tun
+keepalive 20 60
+cipher AES-256-CBC
+data-ciphers AES-256-CBC
+verb 3
+mute 20

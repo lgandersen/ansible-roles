@@ -1,0 +1,50 @@
+---
+- name: "Install openvpn"
+  pkgng:
+    name: openvpn
+    state: present
+  tags: openvpn_server
+
+- include_tasks:
+    file: "easy_rsa.yml"
+    apply:
+      tags: "openvpn_server"
+  tags: "openvpn_server"
+
+- include_tasks:
+    file: "openvpn.yml"
+    apply:
+      tags: "openvpn_server"
+  tags: "openvpn_server"
+
+  #LAV CA: ""
+  #LAV SERVER: easyrsa --batch build-server-full skolem  nopass ---> laver pki/issued/skolem.crt
+  #LAV CLIENT: easyrsa --batch build-client-full frege nopass ----> laver pki/issued/frege.crt
+  # the cli docs indicate that the above commands are identical
+  # Helpful docs to easy-rsa (rember to use help function since commands have changed): https://openvpn.net/community-resources/how-to/#pki
+
+  #root@openvpn:/usr/local/share/easy-rsa # easyrsa init-pki
+  #
+  #Note: using Easy-RSA configuration from: /usr/local/share/easy-rsa/vars
+  #
+  #init-pki complete; you may now create a CA or requests.
+  #Your newly created PKI dir is: /usr/local/share/easy-rsa/pki
+
+
+#- name: "Generate self-signed certificates"
+#  command: "openssl req -new -newkey rsa:2048 -sha256 -days 4096 -nodes -x509 -keyout {{ irc_server_name }}.pem -out {{ irc_server_name }}.pem -subj \"/C=US/ST=Some State/L=Narnia /O=/OU=/CN=irc.brobye.dk/emailAddress=\""
+#  args:
+#    creates: "/usr/local/etc/ircd-ratbox/{{ irc_server_name }}.pem"
+#    chdir: /usr/local/etc/ircd-ratbox/
+#
+#- name: "Check if the symlink '/usr/ports' is present"
+#  command: "openssl dhparam -out dh.pem 2048"
+#  args:
+#    creates: "/usr/local/etc/ircd-ratbox/dh.pem"
+#    chdir: /usr/local/etc/ircd-ratbox/
+#
+#- name: "Enable ratbox in rc.conf"
+#  service:
+#    name: ircd-ratbox
+#    enabled: yes
+#    state: started

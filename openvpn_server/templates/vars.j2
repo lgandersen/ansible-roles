@@ -1,0 +1,7 @@
+# In how many days should the root CA key expire?
+set_var EASYRSA_CA_EXPIRE      {{ openvpn_server_ca_expire }}
+
+# In how many days should certificates expire?
+set_var EASYRSA_CERT_EXPIRE    {{ openvpn_server_cert_expire }}
+
+set_var EASYRSA_KEY_SIZE        {{ openvpn_server_rsa_key_size }}

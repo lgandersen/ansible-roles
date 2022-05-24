@@ -80,6 +80,12 @@
 
 ##############################################################################
 ### application roles below here
+- name: "configure openvpn servers"
+  hosts: "openvpn_servers"
+  become: True
+  roles:
+    - "openvpn_server"
+
 - name: "configure irc servers"
   hosts: "irc_servers"
   become: True

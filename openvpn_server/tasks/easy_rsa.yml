@@ -1,0 +1,38 @@
+---
+- name: "Initiate easy-rsa pki"
+  command: "easyrsa init-pki"
+  args:
+    creates: "/usr/local/share/easy-rsa/pki"
+    chdir: /usr/local/share/easy-rsa
+  tags: openvpn_server
+
+- name: "Build the CA"
+  command: "easyrsa --batch build-ca nopass"
+  args:
+    creates: "/usr/local/share/easy-rsa/pki/ca.crt"
+    chdir: /usr/local/share/easy-rsa
+  tags: openvpn_server
+
+- name: "Create server certificate"
+  command: "easyrsa --batch build-server-full {{ inventory_hostname }} nopass"
+  args:
+    creates: "/usr/local/share/easy-rsa/pki/issued/{{ inventory_hostname }}.crt"
+    chdir: /usr/local/share/easy-rsa
+  tags: openvpn_server
+
+- name: "Create client certificates"
+  command: "easyrsa --batch build-client-full {{ item }} nopass"
+  args:
+    creates: "/usr/local/share/easy-rsa/pki/issued/{{ item }}.crt"
+    chdir: /usr/local/share/easy-rsa
+  loop: "{{ openvpn_client_certificates }}"
+  tags: openvpn_server
+
+- name: "Generate Diffie-Hellman parameters"
+  command: "easyrsa --batch gen-dh nopass"
+  args:
+    creates: "/usr/local/share/easy-rsa/pki/dh.pem"
+    chdir: /usr/local/share/easy-rsa
+  tags: openvpn_server
+
+

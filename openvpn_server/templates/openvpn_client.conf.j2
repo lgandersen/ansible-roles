@@ -1,0 +1,29 @@
+{% if with_gateway %}
+# OpenVPN client configuration that routes all traffic through the VPN interface
+{% else %}
+# OpenVPN client configuration that ignores any default gateway being pushed by the server
+{% endif %}
+
+client
+port 1194
+proto udp
+dev tun0
+remote-cert-tls server
+
+remote {{ openvpn_server_if_name }} 1194
+
+ca   /path/to/certs/ca.crt
+cert /path/to/certs/client.crt
+key  /path/to/certs/client.key
+
+{% if not with_gateway %}
+pull-filter ignore redirect-gateway
+{% endif %}
+
+persist-key
+persist-tun
+keepalive 20 60
+cipher AES-256-CBC
+data-ciphers AES-256-CBC
+verb 3
+mute 20

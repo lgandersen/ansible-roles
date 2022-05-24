@@ -11,4 +11,3 @@
     key_options: 'from="{{ item.fromip }}",restrict,command="/usr/local/bin/zfscmd.sh $SSH_ORIGINAL_COMMAND"'
     comment: "{{ item.comment }}"
   with_items: "{{ tykbackup_authorized_keys | default([]) }}"
-
