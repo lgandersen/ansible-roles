@@ -1,0 +1,14 @@
+[global]
+pid = run/php-fpm.pid
+log_level = error
+
+[www]
+;listen = /var/php/php-fpm.socket
+listen = {{ ansible_facts.default_ipv4.address }}:7777
+user = www
+group = www
+pm = dynamic
+pm.max_children = 50
+pm.start_servers = 20
+pm.min_spare_servers = 5
+pm.max_spare_servers = 35

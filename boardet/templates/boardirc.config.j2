@@ -1,0 +1,18 @@
+% rebar compile && erl -config test.config -pa deps/epgsql/ebin/ -pa ebin/ -eval "application:start(erling)."
+[{erling, [
+    % {host, "irc.brobye.dk"},
+    {host, "{{ ircserver_ip }}"},
+    {port, 6697},
+    {password, "{{ irc_server_password }}"},
+    {ssl, true},
+    {channels, ["#boardet"]},
+    {trigger, "Erling:"},
+    {nick, "Erling"},
+    {realname, "Erling Hansen"},
+    {boardurl, "https://brobye.dk/"},
+    {dbhost, "{{ postgres_host }}"},
+    {dbport, 5432},
+    {dbuser, "{{ boardet_db_user }}"},
+    {dbpass, "{{ boardet_db_pass }}"},
+    {dbname, "{{ boardet_db_name }}"}
+    ]}].

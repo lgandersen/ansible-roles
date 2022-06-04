@@ -1,0 +1,12 @@
+---
+- include_tasks:
+    file: "boardet.yml"
+    apply:
+      tags: "boardet"
+  tags: "boardet"
+
+- include_tasks:
+    file: "ircbot.yml"
+    apply:
+      tags: "erling"
+  tags: "erling"

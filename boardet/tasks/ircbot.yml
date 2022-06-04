@@ -1,0 +1,42 @@
+---
+- name: "Install erlang"
+  pkgng:
+    name: erlang,rebar
+    state: "present"
+
+- name: "Fetch the code for Erling"
+  git:
+    repo: "https://github.com/lgandersen/Erling-boardbot.git"
+    dest: /usr/home/ansible/Erling
+    update: no
+
+- name: "copy Erlings configuration file"
+  template:    
+    src: "boardirc.config.j2"
+    dest: "/usr/home/ansible/Erling/boardirc.config"
+    owner: ansible
+
+- name: "Get dependencies (epgsql) for compiling Erling"
+  command: "rebar get-deps"
+  args:
+    creates: "/usr/home/ansible/Erling/deps"
+    chdir: /usr/home/ansible/Erling/
+
+- name: "Compiling Erling"
+  command: "rebar compile"
+  args:
+    creates: "/usr/home/ansible/Erling/ebin"
+    chdir: /usr/home/ansible/Erling/
+
+- name: "Create supervisord.d config file to run Erling the IRC bot"
+  include_role:
+    name: "supervisord_server"
+    tasks_from: "supervisord.d"
+  vars:
+    supervisord_filename: "erling"
+    supervisord_programs:
+      - name: "erling"
+        comment: "run Erling the IRC bot"
+        command: /usr/local/bin/erl -config /usr/home/ansible/Erling/boardirc.config -pa /usr/home/ansible/Erling/deps/epgsql/ebin -pa /usr/home/ansible/Erling/ebin -eval "application:start(erling)."
+        user: "ansible"
+        priority: "1"
