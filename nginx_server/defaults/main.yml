@@ -12,8 +12,6 @@ nginx_cache_size: "10g"
 nginx_cache_inactive: "60m"
 nginx_goaccess: True
 goaccess_exclude_ips: []
-nginx_sts: True
-nginx_sts_includesubdomains: True
 nginx_exporter_version: "master"
 nginx_exporter_uri: "http://{{ ansible_nodename }}/stub_status"
 nginx_client_max_body_size: "100m"
@@ -24,3 +22,12 @@ nginx_port_in_redirect: "on"
 nginx_proxy_cache_bypass:
   - "$http_pragma"
   - "$http_cache_control"
+
+dehydrated_enabled: False
+# Used for testing so we do not hit the rate-limit. Use "letsencrypt" to hit production ACME API servers.
+dehydrated_ca_type: "letsencrypt-test"
+dehydrated_domains:
+  example.com:
+    - "example.com"
+    - "www.example.com"
+    - "anothersubdomain.example.com"

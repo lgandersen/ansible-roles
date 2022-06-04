@@ -5,10 +5,15 @@
 - include_tasks: "configs.yml"
   tags:
     - "vhosts"
+- include_tasks:
+    file: "dehydrated.yml"
+    apply:
+      tags: dehydrated
+  when: dehydrated_enabled
+  tags: dehydrated
 - include_tasks: "ocsp.yml"
   when:
     - nginx_proxy
-    - certgrinder_hostname_sets is defined
     - nginx_ocsp_stapling
 - include_tasks: "goaccess.yml"
   when:

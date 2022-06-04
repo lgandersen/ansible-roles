@@ -1,0 +1,41 @@
+---
+- name: "Install dehydrated"
+  pkgng:
+    name: "dehydrated"
+    state: "present"
+
+- name: "Copy dehydrated domains.txt file"
+  template:
+    src: "domains.txt.j2"
+    dest: "/usr/local/etc/dehydrated/domains.txt"
+
+- name: "Copy dehydrated config file"
+  template:
+    src: "config.j2"
+    dest: "/usr/local/etc/dehydrated/config"
+
+- name: "Copy deploy.sh"
+  copy:
+    src: "deploy.sh"
+    dest: "/usr/local/etc/dehydrated/deploy.sh"
+    mode: "+x"
+
+- name: "Enable dehydrated"
+  community.general.sysrc:
+    name: weekly_dehydrated_enable
+    state: present
+    value: "YES"
+    path: /etc/periodic.conf
+
+- name: "Configure deploy.sh as the deployscript used"
+  community.general.sysrc:
+    name: weekly_dehydrated_deployscript
+    state: present
+    value: "/usr/local/etc/dehydrated/deploy.sh"
+    path: /etc/periodic.conf
+
+# A bit of a hack to make this idempotent (so we don't hammer the ACME-server while using ansible)
+- name: "Register account with ACME server"
+  shell: "/usr/local/bin/dehydrated --register --accept-terms && touch /usr/local/etc/dehydrated/ansible_registered"
+  args:
+    creates: /usr/local/etc/dehydrated/ansible_registered
