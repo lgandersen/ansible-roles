@@ -1,0 +1,4 @@
+[devfsrules_jail_vnet_vpn=6]
+add include $devfsrules_jail_vnet
+add path 'tun*' unhide
+add path 'bpf*' unhide
