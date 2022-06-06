@@ -7,12 +7,13 @@ dns_resolver_ips:
   - '89.233.43.71'
 
 packages:
+  - "git"
   - "tmux"
   - "screen"
   - "sudo"
-  - "stow"
-  - "git"
+  - "yadm"
   - "bash"
+  - "zsh"
   - "vim"
   - "moreutils"
 

@@ -1,18 +1,23 @@
 ---
 - include_tasks: "debug.yml"
-- include_tasks: "resolvconf.yml"
-- include_tasks: "etchosts.yml"
+- name: "configure the resolv.conf, aliases, hosts and motd, files"
+  include_tasks: "configure.yml"
 - include_tasks: "packages.yml"
 - include_tasks: "users.yml"
   tags:
     - "usermanagement"
+- include_tasks:
+    file: "dotfiles.yml"
+    apply:
+      tags: "dotfiles"
+  tags: "dotfiles"
+  with_dict: "{{ users | default({}) }}"
+  when: item.value.user_use_dotfiles
 - include_tasks: "ansible.yml"
   tags:
     - "ansiblekeys"
-- include_tasks: "motd.yml"
 - include_tasks: "sshd.yml"
 - include_tasks: "syslog.yml"
-- include_tasks: "etcaliases.yml"
 - include_tasks: "nullmailer.yml"
 - include_tasks: "newsyslog.yml"
 - include_tasks: "extra-cron.d-jobs.yml"

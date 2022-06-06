@@ -1,0 +1,14 @@
+---
+- name: "Fetch dotfiles"
+  command: /usr/local/bin/yadm clone https://github.com/lgandersen/dotfiles.git
+  args:
+    creates: /home/lga/.local/share/yadm/repo.git
+    chdir: ~/
+  become_user: "{{item.key}}"
+
+- name: "Fetch submodules"
+  command: /usr/local/bin/yadm submodule update --init
+  args:
+    chdir: ~/
+    creates: ~/.oh-my-zsh/README.md
+  become_user: "{{ item.key }}"
