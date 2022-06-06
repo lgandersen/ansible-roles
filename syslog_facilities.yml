@@ -22,9 +22,6 @@
   - php_fpm_server
   - bind
 
-- local4:
-  - certgrinder
-
 - local5:
   - prometheus
   - ansible
@@ -34,8 +31,6 @@
   - isc_dhcpd_server
   - mediawiki_server
   - nfsen_server
-  - certgrinderd
 
 - local7:
   - nginx_server
-
