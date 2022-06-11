@@ -1,0 +1,20 @@
+---
+- name: "Fetch project source code from git"
+  git:
+    repo: "{{ item.repo }}"
+    dest: "/usr/home/ansible/{{item.name}}"
+    update: no # Consider 'yes' ?
+
+- name: "Build html-bundle from python source code"
+  command: "/root/.local/bin/sphinx-build -b html /usr/home/ansible/{{item.name}}/docs /usr/home/ansible/{{item.name}}/docs/_sphinx_build"
+
+- name: "Create destination directory if it does not exist"
+  file:
+    dest: "{{ item.dest }}"
+    state: "directory"
+
+- name: "Copy html-bundle to folder for webserving"
+  file:
+    src: "/usr/home/ansible/{{item.name}}/docs/_sphinx_build"
+    dest: "{{ item.dest }}/{{item.name}}"
+    state: link

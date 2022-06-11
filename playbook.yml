@@ -98,6 +98,12 @@
   roles:
     - "boardet"
 
+- name: "configure sphinx servers"
+  hosts: "sphinx_servers"
+  become: True
+  roles:
+    - "sphinx_server"
+
 - name: "configure etherpad servers"
   hosts: "etherpad_servers"
   become: True

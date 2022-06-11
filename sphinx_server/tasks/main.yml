@@ -1,0 +1,26 @@
+---
+# Installing pipx directly did not work. Instead, install pip first and then `pip install pipx`
+- name: Install python and pip
+  pkgng:
+    name: "py38-pip"
+    state: present
+  tags: sphinx
+
+- name: Install pipx - using pip
+  shell: pip install pipx
+  args:
+    creates: /usr/local/bin/pipx
+  tags: sphinx
+
+- name: Install Sphinx - using pipx
+  shell: pipx install Sphinx
+  args:
+    creates: /usr/home/ansible/.local/bin/sphinx-build
+  tags: sphinx
+
+- include_tasks:
+    file: "sphinx_server/tasks/generate_docs.yml"
+    apply:
+      tags: "sphinx"
+  tags: "sphinx"
+  with_list: "{{ sphinx_tasks | default([]) }}"
