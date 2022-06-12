@@ -20,12 +20,28 @@
     dest: "/usr/local/etc/dehydrated/deploy.sh"
     mode: "+x"
 
+- name: "Create self-signed cert configs"
+  template:
+    src: "openssl_selfsigned.conf.j2"
+    dest: "/usr/local/etc/nginx/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}.conf"
+  with_dict: "{{ vhosts }}"
+  when: not dehydrated_enabled
+
+- name: "Create self-signed certs"
+  command: "openssl req -x509 -batch -nodes -days 365 -newkey rsa:2048 -keyout {{ item.value.hostnames[0].encode('idna').decode('ascii') }}.key -out {{ item.value.hostnames[0].encode('idna').decode('ascii') }}.crt -config /usr/local/etc/nginx/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}.conf"
+  args:
+    chdir: "/usr/local/etc/nginx/certificates"
+    creates: "{{ item.value.hostnames[0].encode('idna').decode('ascii') }}.key"
+  with_dict: "{{ vhosts }}"
+  when: not dehydrated_enabled
+
 - name: "Enable dehydrated"
   community.general.sysrc:
     name: weekly_dehydrated_enable
     state: present
     value: "YES"
     path: /etc/periodic.conf
+  when: dehydrated_enabled
 
 - name: "Configure deploy.sh as the deployscript used"
   community.general.sysrc:
@@ -33,9 +49,11 @@
     state: present
     value: "/usr/local/etc/dehydrated/deploy.sh"
     path: /etc/periodic.conf
+  when: dehydrated_enabled
 
-# A bit of a hack to make this idempotent (so we don't hammer the ACME-server while using ansible)
+# To make this idempotent (so we don't hammer the ACME-server while using ansible) we use a little hack
 - name: "Register account with ACME server"
   shell: "/usr/local/bin/dehydrated --register --accept-terms && touch /usr/local/etc/dehydrated/ansible_registered"
   args:
     creates: /usr/local/etc/dehydrated/ansible_registered
+  when: dehydrated_enabled

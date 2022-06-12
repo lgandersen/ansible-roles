@@ -1,3 +1,5 @@
+load_module                     /usr/local/libexec/nginx/ngx_http_headers_more_filter_module.so;
+
 ### default error log
 error_log                               /usr/local/www/logs/error.log;
 error_log                               syslog:server=unix:/var/run/log; # defaults to facility local7
@@ -65,6 +67,7 @@ http {
     client_max_body_size        {{ nginx_client_max_body_size }};
     client_body_buffer_size     1m;
     server_tokens               off;
+    more_set_headers            'Server: Yes';
 
 {% if nginx_extra_http_config|default("") %}
 {{ nginx_extra_http_config | indent( width=4, first=True ) }}

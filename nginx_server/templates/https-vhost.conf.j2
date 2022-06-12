@@ -13,19 +13,14 @@ server {
     # hostnames handled in this vhost, IDN names are included both as idna and ascii, where applicable
     server_name             {% for hostname in item.value.hostnames %}{{ hostname.encode('idna').decode('ascii') }} {% if hostname != hostname.encode('idna').decode('ascii') %}{{ hostname }} {% endif %}{% endfor %};
 
-{% if item.value.letsencrypt | default(True) %}
-    ssl_certificate         {{ certgrinder_home }}/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}-chain.rsa.crt;
-    ssl_certificate_key     {{ certgrinder_home }}/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}-keypair.rsa.key;
-    ssl_certificate         {{ certgrinder_home }}/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}-chain.ecdsa.crt;
-    ssl_certificate_key     {{ certgrinder_home }}/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}-keypair.ecdsa.key;
+{% if dehydrated_enabled %}
+    ssl_certificate /usr/local/etc/dehydrated/certs/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}/fullchain.pem;
+    ssl_certificate_key /usr/local/etc/dehydrated/certs/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}/privkey.pem;
 {% else %}
     ssl_certificate         /usr/local/etc/nginx/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}.crt;
     ssl_certificate_key     /usr/local/etc/nginx/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}.key;
 {% endif %}
     include                 /usr/local/etc/nginx/tls.conf;
-{% if 'csp' in item.value %}
-    more_set_headers        "Content-Security-Policy: {{ item.value.csp }}";
-{% endif %}
     include                 /usr/local/etc/nginx/securityheaders.conf;
 {% if item.value.reverse_proxy | default(True) %}
     include                 /usr/local/etc/nginx/proxyheaders.conf;
@@ -42,10 +37,6 @@ server {
 {% for header, value in item.value.more_headers %}
     more_set_headers        "{{ header }}: {{ value }}";
 {% endfor %}{% endif %}
-
-    location = /__nginx_ocsp_priming/ {
-        return 200 'OK';
-    }
 
     # vhost specific config below here
 
@@ -78,17 +69,15 @@ server {
     server_name             _;
 
     # certificate and key (wont match hostname, but whatever, this is just a fallback vhost)
-{% if item.value.letsencrypt | default(True) %}
-    ssl_certificate         {{ certgrinder_home }}/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}-chain.rsa.crt;
-    ssl_certificate_key     {{ certgrinder_home }}/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}-keypair.rsa.key;
-    ssl_certificate         {{ certgrinder_home }}/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}-chain.ecdsa.crt;
-    ssl_certificate_key     {{ certgrinder_home }}/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}-keypair.ecdsa.key;
+{% if dehydrated_enabled %}
+    ssl_certificate         /usr/local/etc/dehydrated/certs/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}/fullchain.pem;
+    ssl_certificate_key     /usr/local/etc/dehydrated/certs/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}/privkey.pem;
 {% else %}
     ssl_certificate         /usr/local/etc/nginx/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}.crt;
     ssl_certificate_key     /usr/local/etc/nginx/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}.key;
 {% endif %}
     include                 /usr/local/etc/nginx/tls.conf;
-    include                 /usr/local/etc/nginx/securityheaders.conf;
+    #include                 /usr/local/etc/nginx/securityheaders.conf;
 
     # redirect requests to the first hostname in the list
     location / {

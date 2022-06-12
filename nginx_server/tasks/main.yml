@@ -9,12 +9,7 @@
     file: "dehydrated.yml"
     apply:
       tags: dehydrated
-  when: dehydrated_enabled
   tags: dehydrated
-- include_tasks: "ocsp.yml"
-  when:
-    - nginx_proxy
-    - nginx_ocsp_stapling
 - include_tasks: "goaccess.yml"
   when:
     - nginx_goaccess

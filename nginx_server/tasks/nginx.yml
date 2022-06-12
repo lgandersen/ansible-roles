@@ -1,8 +1,44 @@
 ---
-- name: "Install nginx"
+# NOTE: If custom building nginx does not work a backu-plan is to use the 'nginx-full' package instead.
+#- name: "Install nginx (full version)"
+#  pkgng:
+#    name: "nginx-full"
+#    state: "present"
+
+- name: "Fetch ports"
+  command: "portsnap --interactive fetch"
+  args:
+    creates: /var/db/portsnap/files/
+
+- name: "Extract relevant ports"
+  command: "portsnap extract {{ item }}"
+  args:
+    creates: "/usr/ports/{{ item }}"
+  with_list:
+    - Mk
+    - UID
+    - GID
+    - Keywords
+    - Templates
+    - www/nginx
+
+- name: "Install pcre dependency"
   pkgng:
-    name: "nginx"
-    state: "present"
+    name: pcre
+    state: present
+
+- name: "Add custom build options to /etc/make.conf"
+  blockinfile:
+    path: /etc/make.conf
+    block: |
+      # Custom NGINX_BUILD:
+      www_nginx_SET=  HEADERS_MORE
+
+- name: "Build and install the (custom) nginx port"
+  shell: "env BATCH=on make install"
+  args:
+    chdir: /usr/ports/www/nginx
+    creates: /usr/local/sbin/nginx
 
 - name: "Enable nginx"
   service:
