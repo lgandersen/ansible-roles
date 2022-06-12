@@ -12,13 +12,13 @@
 
 - name: "copy index.php file with proper credentials"
   template:
-    src: "index.php.j2"
+    src: "files/index.php.j2"
     dest: "/usr/local/www/brobye_dk/index.php"
     owner: root
 
 - name: "copy splash.php file with proper credentials"
   template:    
-    src: "splash.php.j2"
+    src: "files/splash.php.j2"
     dest: "/usr/local/www/brobye_dk/splash.php"
     owner: root
 

@@ -3,3 +3,6 @@
 
 # virtualenv
 venv/
+
+# Boardet static content + a few source code files
+boardet/files
