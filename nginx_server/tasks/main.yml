@@ -10,6 +10,8 @@
     apply:
       tags: dehydrated
   tags: dehydrated
+  when: nginx_proxy
+
 - include_tasks: "goaccess.yml"
   when:
     - nginx_goaccess
