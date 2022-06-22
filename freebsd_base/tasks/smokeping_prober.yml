@@ -24,17 +24,3 @@
   loop_control:
     loop_var: "fib"
     index_var: "loop_idx"
-
-- name: "Create exporter_exporter.d config file for smokeping_prober"
-  include_role:
-    name: "freebsd_base"
-    tasks_from: "exporter_exporter.d"
-  vars:
-    expexp_filename: "smokeping_prober_fib{{ fib }}.yml"
-    expexp_program:
-      method: "http"
-      http: "{{ { 'port': loop_idx + 9374 } }}"
-  loop: "{{ prometheus_smokeping_fibs }}"
-  loop_control:
-    loop_var: "fib"
-    index_var: "loop_idx"

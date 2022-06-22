@@ -23,7 +23,6 @@
 - include_tasks: "extra-cron.d-jobs.yml"
 - include_role:
     name: "supervisord_server"
-- include_tasks: "exporter_exporter.yml"
 - include_tasks: "node_exporter.yml"
 - include_tasks: "node_exporter_textfile_collector_pkg.yml"
 - include_tasks:
