@@ -1,10 +1,4 @@
 ---
-# NOTE: If custom building nginx does not work a backu-plan is to use the 'nginx-full' package instead.
-#- name: "Install nginx (full version)"
-#  pkgng:
-#    name: "nginx-full"
-#    state: "present"
-
 - name: "Fetch ports"
   command: "portsnap --interactive fetch"
   args:

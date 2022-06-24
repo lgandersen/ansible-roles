@@ -116,13 +116,6 @@
     name: "kibana"
     state: "restarted"
 
-### freebsd_base
-- name: "restart exporter_exporter"
-  supervisorctl:
-    name: "exporter_exporter"
-    state: "restarted"
-
-
 ### fail2ban_server
 - name: "restart fail2ban"
   service:
