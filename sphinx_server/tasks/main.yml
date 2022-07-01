@@ -2,7 +2,7 @@
 # Installing pipx directly did not work. Instead, install pip first and then `pip install pipx`
 - name: Install python and pip
   pkgng:
-    name: "py38-pip"
+    name: "py39-pip"
     state: present
   tags: sphinx
 

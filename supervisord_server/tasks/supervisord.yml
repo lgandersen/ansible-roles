@@ -1,7 +1,7 @@
 ---
 - name: "Install supervisord"
   pkgng:
-    name: "py38-supervisor"
+    name: "py39-supervisor"
     state: "present"
 
 - name: "Copy supervisor config"
