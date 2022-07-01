@@ -31,16 +31,6 @@
   when: static_routes is defined
   tags:
     - "routing"
-- include_tasks:
-    file: "mobile_modem_exporter.yml"
-    apply:
-      tags:
-        - "mobilemodem"
-  when: mobile_modem_devices is defined
-  tags:
-    - "mobilemodem"
-- include_tasks: "ppp.yml"
-  when: ppp_profiles is defined
 
 - name: "Make sure this host gets ip.forwarding enabled when booting"
   command: sysrc gateway_enable="YES"
