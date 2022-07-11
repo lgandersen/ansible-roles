@@ -1,6 +1,7 @@
 ---
 ansible_username: "ansible"
 ansible_home: "/usr/home/{{ ansible_username }}"
+motd_extra_text: ""
 
 dns_resolver_ips:
   - '91.239.100.100'
