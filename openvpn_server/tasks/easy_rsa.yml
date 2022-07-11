@@ -34,5 +34,3 @@
     creates: "/usr/local/share/easy-rsa/pki/dh.pem"
     chdir: /usr/local/share/easy-rsa
   tags: openvpn_server
-
-

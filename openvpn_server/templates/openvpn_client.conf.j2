@@ -7,10 +7,10 @@
 client
 port 1194
 proto udp
-dev tun0
+dev tap
 remote-cert-tls server
 
-remote {{ openvpn_server_if_name }} 1194
+remote {{ openvpn_server_hostname }} 1194
 
 ca   /path/to/certs/ca.crt
 cert /path/to/certs/client.crt

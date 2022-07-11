@@ -1,10 +1,8 @@
 port 1194
 proto udp
-dev {{ openvpn_server_if_name }}
+dev tap # we expect that {{ openvpn_server_if_name }} is created
 
-#local 10.0.2.15 <--- listening address
-
-server {{ openvpn_server_subnet }}
+server-bridge {{ openvpn_server_bridge }}
 
 {% for push_item in openvpn_server_push_items %}
 push "{{ push_item }}"
@@ -16,8 +14,9 @@ key /usr/local/share/easy-rsa/pki/private/{{ inventory_hostname }}.key
 dh /usr/local/share/easy-rsa/pki/dh.pem
 ifconfig-pool-persist /var/tmp/openvpn-pool.txt
 
-user nobody
-group nobody
+# Needed to disable this to run openvpn_shutdown.sh:
+#user nobody
+#group nobody
 persist-key
 persist-tun
 keepalive 20 60
@@ -25,3 +24,7 @@ cipher AES-256-CBC
 data-ciphers AES-256-CBC
 verb 3
 mute 20
+
+script-security 2
+up /usr/local/etc/openvpn/openvpn_startup.sh
+down /usr/local/etc/openvpn/openvpn_shutdown.sh

@@ -6,8 +6,8 @@ openvpn_server_push_items:
   - "route 10.12.34.0 255.255.255.0"
   - "redirect-gateway def1"
 
-# NOTE: This can change if more than one tun-device is created in otherjails or the host.
-openvpn_server_if_name: "tun0"
+# NOTE: This can change if more than one tun-device is created in other jails or the host.
+openvpn_server_if_name: "tap0"
 
 # Hostname where the clients can connect to the server
 openvpn_server_hostname: "changeme.com"

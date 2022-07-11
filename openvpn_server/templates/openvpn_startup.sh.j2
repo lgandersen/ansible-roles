@@ -1,0 +1,5 @@
+#!/bin/sh
+ifconfig bridge create
+ifconfig bridge0 addm jail0 addm {{ openvpn_server_if_name }}
+ifconfig bridge0 up
+ifconfig {{ openvpn_server_if_name }} up

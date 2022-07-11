@@ -3,42 +3,50 @@
   file:
     path: /usr/local/etc/openvpn
     state: directory
-  tags: openvpn_server
 
 - name: "Verify if the tun interface has been created"
   command: "ifconfig {{ openvpn_server_if_name }}"
   register: check_tun
   ignore_errors: True
-  tags: openvpn_server
-
-- name: "Create tun interface"
-  command: "ifconfig tun create"
-  register: tun_creation
-  when: check_tun.rc != 0
-  tags: openvpn_server
 
 - name: "Copy openvpn configuration file"
   template:
     src: "openvpn.conf.j2"
     dest: "/usr/local/etc/openvpn/openvpn.conf"
     owner: root
-  tags: openvpn_server
+
+- name: "Copy openvpn startup script"
+  template:
+    src: "openvpn_startup.sh.j2"
+    dest: "/usr/local/etc/openvpn/openvpn_startup.sh"
+    owner: root
+    mode: '700'
+
+- name: "Copy openvpn shutdown script"
+  template:
+    src: "openvpn_shutdown.sh.j2"
+    dest: "/usr/local/etc/openvpn/openvpn_shutdown.sh"
+    owner: root
+    mode: '700'
+
+- name: "Create client config directory"
+  file:
+    path: /usr/local/etc/openvpn/client_configs
+    state: directory
 
 - name: "Copy openvpn client configuration file that uses the VPN as gw"
   template:
     src: "openvpn_client.conf.j2"
-    dest: "/usr/local/etc/openvpn/openvpn_client_with_gw.conf"
+    dest: "/usr/local/etc/openvpn/client_configs/openvpn_client_with_gw.conf"
     owner: root
-  tags: openvpn_server
   vars:
     with_gateway: True
 
 - name: "Copy openvpn client configuration file that do not use the VPN as gw"
   template:
     src: "openvpn_client.conf.j2"
-    dest: "/usr/local/etc/openvpn/openvpn_client_no_gw.conf"
+    dest: "/usr/local/etc/openvpn/client_configs/openvpn_client_no_gw.conf"
     owner: root
-  tags: openvpn_server
   vars:
     with_gateway: False
 
@@ -47,4 +55,3 @@
     name: openvpn
     enabled: yes
     state: started
-  tags: openvpn_server
