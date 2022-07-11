@@ -14,9 +14,6 @@ set block-policy drop
 if="{{ ansible_default_ipv4.device }}"
 nat_if="lo1"
 jail_if="lo2"
-{% if anycast_serviceinterface %}
-svc_if="lo3"
-{% endif %}
 
 {% if pf_jail_nat_ip is defined %}jail_nat_ip="{{ pf_jail_nat_ip }}"
 {% endif %}

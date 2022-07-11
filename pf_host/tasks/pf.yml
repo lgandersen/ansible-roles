@@ -33,20 +33,21 @@
     enabled: yes
     state: started
 
-- name: "Setup pf.conf for jail/vm hosts"
+- name: "Copy pf.conf (jail hosts)"
   template:
     src: "pf-jail.conf.j2"
     dest: "{{ pf_conf_path }}"
-    validate: 'pfctl -n -f %s'
-  when: pf_jail_vm_host
+  when: pf_in_jail
 
-- name: "Setup pf.conf for regular hosts and gateways"
+- name: "Copy pf.conf (regular hosts and gateways)"
   template:
     src: "pf.conf.j2"
     dest: "{{ pf_conf_path }}"
-    validate: 'pfctl -n -f %s'
-  when: not pf_jail_vm_host
+  when: not pf_in_jail
   notify: "Reload pf rules"
+
+- name: "Verify pf.conf (jail/vm hosts)"
+  shell: "pfctl -n -f {{ pf_conf_path }}"
 
 - name: "Enable pflog in rc.conf"
   service:

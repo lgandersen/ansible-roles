@@ -1,7 +1,7 @@
 ---
 pf_conf_path: "/etc/pf.conf"
 pf_jail_nat_ip: "{{ ansible_default_ipv4.address }}"
-pf_jail_vm_host: False
+pf_in_jail: False
 pf_gateway: False
 pf_anycast_host: False
 carp_preempt: True
