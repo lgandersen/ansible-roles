@@ -1,7 +1,7 @@
 ---
 - name: "Install php, nginx and other relevant packages"
   pkgng:
-    name: php81,php81-pgsql,php81-extensions,php81-gd,nginx
+    name: php81,php81-pgsql,php81-extensions,php81-gd,nginx,php81-pdo_pgsql
     state: "present"
 
 - name: "Copy boardet source php source files"
@@ -26,12 +26,6 @@
   copy:
     src: extensions.ini
     dest: /usr/local/etc/php/
-    owner: root
-
-- name: "copy nginx configuration for boardet"
-  template:    
-    src: "nginx.conf.j2"
-    dest: "/usr/local/etc/nginx/nginx.conf"
     owner: root
 
 - name: "copy php-fpm configuration for boardet"
