@@ -1,5 +1,7 @@
 ---
 - include_tasks:
     file: "ircd.yml"
+    apply:
+      tags: "ircserver"
   tags:
     - "ircserver"

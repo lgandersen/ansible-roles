@@ -1,35 +1,41 @@
 ---
-- name: "Install irc server (ratbox)"
+- name: "Install irc server (inspircd)"
   pkgng:
-    name: ircd-ratbox
+    name: inspircd
     state: present
 
 - name: "copy motd file"
-  copy:    
-    src: "ircd.motd"
-    dest: "/usr/local/etc/ircd-ratbox/ircd.motd"
+  copy:
+    src: "motd.txt"
+    dest: "/usr/local/etc/inspircd/motd.txt"
     owner: root
 
 - name: "copy configuration file"
-  template:    
-    src: "ircd.conf.j2"
-    dest: "/usr/local/etc/ircd-ratbox/ircd.conf"
+  template:
+    src: "inspircd.conf.j2"
+    dest: "/usr/local/etc/inspircd/inspircd.conf"
     owner: root
 
-- name: "Generate self-signed certificates"
-  command: "openssl req -new -newkey rsa:2048 -sha256 -days 4096 -nodes -x509 -keyout {{ irc_server_name }}.pem -out {{ irc_server_name }}.pem -subj \"/C=US/ST=Some State/L=Narnia /O=/OU=/CN=irc.brobye.dk/emailAddress=\""
+- name: "Generate self-signed certificate"
+  command: "openssl req -new -newkey rsa:2048 -sha256 -days 4096 -nodes -x509 -keyout {{ irc_server_name }}.key -out {{ irc_server_name }}.pem -subj \"/C=US/ST=Some State/L=Narnia /O=/OU=/CN={{ irc_server_name }}/emailAddress=\""
   args:
-    creates: "/usr/local/etc/ircd-ratbox/{{ irc_server_name }}.pem"
-    chdir: /usr/local/etc/ircd-ratbox/
+    creates: "/usr/local/etc/inspircd/{{ irc_server_name }}.pem"
+    chdir: /usr/local/etc/inspircd/
 
-- name: "Check if the symlink '/usr/ports' is present"
+- name: "Genereate Diffi-Hellman params"
   command: "openssl dhparam -out dh.pem 2048"
   args:
-    creates: "/usr/local/etc/ircd-ratbox/dh.pem"
-    chdir: /usr/local/etc/ircd-ratbox/
+    creates: "/usr/local/etc/inspircd/dh.pem"
+    chdir: /usr/local/etc/inspircd/
 
-- name: "Enable ratbox in rc.conf"
+- name: "Make user ircd the owner of the certificate key"
+  file:
+    path: "/usr/local/etc/inspircd/{{ irc_server_name }}.key"
+    owner: ircd
+    group: ircd
+
+- name: "Enable inspircd in rc.conf"
   service:
-    name: ircd-ratbox
+    name: inspircd
     enabled: yes
-    state: started
+    state: restarted
