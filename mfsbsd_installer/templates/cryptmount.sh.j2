@@ -1,0 +1,16 @@
+#!/bin/sh
+OLDSTTY=$(stty -g)
+echo "GELI Password:"
+stty -echo
+read PASS
+stty $OLDSTTY
+
+{% for device in device_names %}
+sudo geli attach -j - /dev/{{ device }}p3 <<EOF
+$PASS
+EOF
+{% endfor %}
+
+unset PASS
+
+sudo zfs mount -a

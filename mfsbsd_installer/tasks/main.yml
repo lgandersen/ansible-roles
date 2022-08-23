@@ -1,0 +1,109 @@
+---
+# Minor hack to remove zpool metadata
+- name: "removing old zroot zpool if it exists"
+  shell: "zpool import -f -N zroot && zpool destroy zroot"
+  ignore_errors: yes
+
+- name: "Destroy old partitions from the disks"
+  shell: "/sbin/gpart destroy -F /dev/{{ item }}"
+  loop: "{{ device_names }}"
+
+- name: "Install FreeBSD on the server"
+  shell: "/root/bin/zfsinstall -u https://download.freebsd.org/ftp/releases/amd64/amd64/{{ freebsd_release }}/ -d {{ device_names[0] }} -d {{ device_names[1] }} -r mirror -p zroot -z {{ zroot_size }}"
+  args:
+    creates: /mnt/etc/motd
+
+- name: "Make a basic configuration of /etc/rc.conf on the new system"
+  shell: "chroot /mnt sysrc {{ item }}"
+  loop:
+    - ifconfig_DEFAULT="DHCP"
+    - sshd_enable="YES"
+    - sshd_flags="-oPermitRootLogin=no -oPasswordAuthentication=no"
+    - pf_enable="YES"
+    - pflog_enable="YES"
+
+- name: "Create a temporary PF-configuration file"
+  template:
+    src: "pf.conf.j2"
+    dest: "/mnt/etc/pf.conf"
+    owner: root
+
+- name: "Adding group for ansible"
+  shell: "chroot /mnt pw groupadd -q -n {{ freebsd_user }}"
+
+- name: "Adding ansible user"
+  shell: "chroot /mnt echo -n $(openssl passwd -5 {{ user_password }}) | chroot /mnt pw useradd -n {{ freebsd_user }} -u 1001 -s /bin/sh -m -d /usr/home/{{ freebsd_user }} -G {{ freebsd_user }} -c 'L. E. J. Brouwer ftw' -H 0"
+
+- name: "Create a directory if it does not exist"
+  file:
+    path: "/mnt/usr/home/{{ freebsd_user }}/.ssh/"
+    state: directory
+    mode: '0755'
+
+- name: "Add the public key to the list of authorized ssh-keys of newly added user"
+  shell: "echo \"{{ freebsd_user_authorized_ssh_key }}\" >> /mnt/usr/home/{{ freebsd_user }}/.ssh/authorized_keys"
+
+- name: "Setting proper owner"
+  shell: "chroot /mnt chown -R {{ freebsd_user }} /usr/home/{{ freebsd_user }}/.ssh"
+
+- name: "Mount devfs on the newly installed system from mfsBSD"
+  shell: "mount -t devfs devfs /mnt/dev"
+  args:
+    creates: /mnt/dev/zero
+
+- name: "Copy resolv.conf to the newly installed system from mfsBSD"
+  shell: "cp /etc/resolv.conf /mnt/etc/"
+
+- name: "Install sudo on the new system"
+  shell: chroot /mnt pkg install -y sudo
+  args:
+    creates: /mnt/usr/local/etc/sudo.conf
+
+- name: "Add the ansible user to sudoers file"
+  lineinfile:
+    path: /mnt/usr/local/etc/sudoers
+    line: "{{ freebsd_user }} ALL=(ALL) NOPASSWD: ALL"
+
+- name: "Enable GELI in /boot/loader.conf"
+  shell: chroot /mnt sysrc -f /boot/loader.conf geom_eli_load="YES"
+
+- name: "Create partitions for the encrypted pool"
+  shell: "gpart add -t freebsd-zfs {{ item }}"
+  args:
+    creates: "/dev/{{ item }}p3"
+  loop: "{{ device_names }}"
+
+- name: "Initialize GELI devices"
+  shell: "echo {{ geli_password }} | geli init -B /mnt/var/backups/{{ item }}p3.eli -J - /dev/{{ item }}p3"
+  args:
+    creates: "/mnt/var/backups/{{ item }}p3.eli"
+  loop: "{{ device_names }}"
+
+- name: "Attach GELI devices"
+  shell: "echo {{ geli_password }} | geli attach -j - /dev/{{ item }}p3"
+  args:
+    creates: "/dev/{{ item }}p3.eli"
+  loop: "{{ device_names }}"
+
+- name: "Check if the pool has already been created"
+  shell: "zpool status {{ encrypted_zpool }}"
+  register: zpool_check
+  ignore_errors: yes
+
+- name: "Create main pool using the GELI devices"
+  shell: "zpool create {{ encrypted_zpool }} mirror /dev/{{ device_names[0] }}p3.eli /dev/{{ device_names[1] }}p3.eli"
+  when: zpool_check.rc != 0
+
+- name: "Create mounting script for the encrypted zpool"
+  template:
+    src: "cryptmount.sh.j2"
+    dest: "/mnt/usr/home/{{ freebsd_user }}/cryptmount.sh"
+    mode: 0700
+
+- name: "Setting proper owner"
+  shell: "chroot /mnt chown {{ freebsd_user }} /usr/home/{{ freebsd_user }}/cryptmount.sh"
+
+- name: "Reboot the server into the newly installed FreeBSD system"
+  shell: "shutdown -r now"
+  async: 2
+  poll: 0

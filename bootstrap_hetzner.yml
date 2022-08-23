@@ -1,0 +1,83 @@
+---
+##############################################################################
+### Bootstrap hosts with no Python interpreter installed
+- name: "Install Python"
+  hosts: "mfsbsd_installer_systems" # This only holds for the msfBSD host
+  gather_facts: False
+  tasks:
+    - name: "Install Python"
+      raw: "pkg install -y python"
+      args:
+        creates: "/usr/local/bin/python"
+
+
+##############################################################################
+### Include extra variables, first global, then group secrets, then host secrets
+- name: "Include include_vars/global.yml with variables used across multiple roles"
+  hosts: "all"
+  tasks:
+    - include_vars: "include_vars/global.yml"
+      tags:
+        - "always"
+
+- name: "Include group secrets"
+  hosts: "all"
+  tasks:
+    - name: "Check if group secrets exists in group_vars for any group this host is a member of"
+      local_action: stat path="../group_vars/{{ item }}-secrets.yml"
+      tags:
+        - "always"
+      loop: "{{ group_names }}"
+      register: result
+    - name: "Include group secrets when the file exists"
+      include_vars: "{{ item.stat.path }}"
+      tags:
+        - "always"
+      when: item.stat.exists
+      loop: "{{ result.results }}"
+
+- name: "Include host secrets"
+  hosts: "all"
+  tasks:
+    - name: "Check if host secrets exists in host_vars"
+      local_action: stat path="../host_vars/{{ ansible_nodename }}-secrets.yml"
+      register: stat_result
+      tags:
+        - "always"
+    - name: "Include host secrets when the file exists"
+      include_vars: "../host_vars/{{ ansible_nodename }}-secrets.yml"
+      tags:
+        - "always"
+      when: stat_result.stat.exists
+
+
+##############################################################################
+### bootstrap plays for Hetzners linux-rescue system and mfsBSD installer
+- name: "Create and deploy a mfsBSD-system used for installing FreeBSD"
+  hosts: linux_rescue_systems
+  tasks:
+    - name: "Copying local mfsBSD-image to the linux rescue system"
+      copy:
+        src: "{{ local_path_mfsbsd_image }}"
+        dest: "{{ dest_path_mfsbsd_image }}"
+
+    - name: "dd'ing the image to all the disks of the server"
+      shell: "dd if={{ dest_path_mfsbsd_image }} of=/dev/{{ item }} bs=4M"
+      loop: "{{ linux_device_names }}"
+
+    - name: "reboot the server into mfsBSD"
+      shell: "shutdown -r now"
+      async: 2
+      poll: 0
+
+
+- name: "Install FreeBSD on the server using mfsBSD (zfs install)"
+  hosts: mfsbsd_installer_systems
+  vars_prompt:
+  - name: geli_password
+    prompt: What is your GELI password?
+
+  - name: user_password
+    prompt: What is the password of the user?
+  roles:
+    - "mfsbsd_installer"
