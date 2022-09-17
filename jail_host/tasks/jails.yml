@@ -11,15 +11,6 @@
     creates: "{{ ezjail_root }}/{{ item.hostname }}"
   loop: "{{ jails }}"
 
-- name: "check if main jailstorage zfs exists"
-  shell: "/sbin/zfs list {{ ezjail_jailstorage_dataset }}"
-  register: ezjail_jailstorage_result
-  ignore_errors: True
-
-- name: "Create main jailstorage zfs as needed"
-  command: "/sbin/zfs create -o mountpoint=none -o jailed=on {{ ezjail_jailstorage_dataset }}"
-  when: ezjail_jailstorage_result.rc == 1
-
 - name: "check if jailstorage zfs filesystems exists"
   shell: "/sbin/zfs list {{ item.1 }}"
   register: ezjail_jailstorage_results
