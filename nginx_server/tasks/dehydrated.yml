@@ -20,6 +20,14 @@
     dest: "/usr/local/etc/dehydrated/deploy.sh"
     mode: "+x"
 
+- name: "Create directories in dehydrated folder to store self-signed certs"
+  file:
+    dest: "/usr/local/etc/dehydrated/certs/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}/"
+    state: directory
+    mode: "0700"
+  with_dict: "{{ vhosts }}"
+  when: not dehydrated_enabled
+
 - name: "Create self-signed cert configs"
   template:
     src: "openssl_selfsigned.conf.j2"
@@ -28,9 +36,9 @@
   when: not dehydrated_enabled
 
 - name: "Create self-signed certs"
-  command: "openssl req -x509 -batch -nodes -days 365 -newkey rsa:2048 -keyout {{ item.value.hostnames[0].encode('idna').decode('ascii') }}.key -out {{ item.value.hostnames[0].encode('idna').decode('ascii') }}.crt -config /usr/local/etc/nginx/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}.conf"
+  command: "openssl req -x509 -batch -nodes -days 365 -newkey rsa:2048 -keyout privkey.pem -out fullchain.pem -config /usr/local/etc/nginx/certificates/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}.conf"
   args:
-    chdir: "/usr/local/etc/nginx/certificates"
+    chdir: "/usr/local/etc/dehydrated/certs/{{ item.value.hostnames[0].encode('idna').decode('ascii') }}"
     creates: "{{ item.value.hostnames[0].encode('idna').decode('ascii') }}.key"
   with_dict: "{{ vhosts }}"
   when: not dehydrated_enabled

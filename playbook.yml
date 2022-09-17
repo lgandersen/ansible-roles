@@ -114,7 +114,8 @@
   hosts: "nginx_servers"
   become: True
   roles:
-    - "nginx_server"
+    - role: "nginx_server"
+      tags: nginx_server
 
 - name: "configure wiki servers"
   hosts: "mediawiki_servers"

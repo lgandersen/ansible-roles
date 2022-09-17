@@ -57,29 +57,16 @@
   tags:
     - "vhosts"
 
-- name: "Copy vhost http configs for http enabled vhosts"
+- name: "Copy vhost configs"
   template:
-    src: "http-vhost.conf.j2"
-    dest: "/usr/local/etc/nginx/vhosts/{{ item.value.hostnames[0] }}-http.conf"
+    src: "vhost.conf.j2"
+    dest: "/usr/local/etc/nginx/vhosts/{{ item.value.hostnames[0] }}.conf"
   with_dict: "{{ vhosts | default({}) }}"
   when:
     - nginx_proxy
-    - (('http' in item.value and item.value.http) or 'http' not in item.value)
   notify:
     - "start nginx"
     - "reload nginx"
-  tags:
-    - "vhosts"
-
-- name: "Copy vhost https configs for https enabled vhosts"
-  template:
-    src: "https-vhost.conf.j2"
-    dest: "/usr/local/etc/nginx/vhosts/{{ item.value.hostnames[0] }}-https.conf"
-  with_dict: "{{ vhosts | default({}) }}"
-  when:
-    - nginx_proxy
-    - (('https' in item.value and item.value.https) or 'https' not in item.value)
-  notify: "reload nginx"
   tags:
     - "vhosts"
 
