@@ -33,6 +33,13 @@
     src: "php-fpm.conf.j2"
     dest: "/usr/local/etc/php-fpm.conf"
     owner: root
+
+- name: "Make the user 'www' the owner of the directory containing the splash images"
+  ansible.builtin.file:
+    path: /usr/local/www/brobye_dk/upload_img
+    state: directory
+    owner: www
+    group: www
      
 - name: "Enable nginx in rc.conf"
   service:
