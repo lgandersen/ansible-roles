@@ -91,7 +91,7 @@
   ignore_errors: yes
 
 - name: "Create main pool using the GELI devices"
-  shell: "zpool create {{ encrypted_zpool }} mirror /dev/{{ device_names[0] }}p3.eli /dev/{{ device_names[1] }}p3.eli"
+  shell: "zpool create -O compression=lz4 {{ encrypted_zpool }} mirror /dev/{{ device_names[0] }}p3.eli /dev/{{ device_names[1] }}p3.eli"
   when: zpool_check.rc != 0
 
 - name: "Create mounting script for the encrypted zpool"
